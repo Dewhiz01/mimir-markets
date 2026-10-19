@@ -1,5 +1,5 @@
 #no_std
-/// Mimir squad — two-sided USDC pool on Soroban.
+//! Mimir squad — two-sided USDC pool on Soroban.
 ///
 /// Port of `contracts/MimirSquad.sol`. Shares equal deposited atomic units and
 /// captains have no economic privilege. Settlement is pull-based per participant,
@@ -10,7 +10,7 @@
 /// `DEVIATION FROM SOLIDITY` at the point they occur.
 
 mod escrow;
-pub mod events;
+pub umod events;
 mod pool;
 mod storage;
 mod types;
@@ -28,6 +28,8 @@ mod test_decimals;
 mod test_dust_isolation;
 #[cfg(test)]
 mod test_fee_rounding;
+#[cfg(test)]
+mod test_fee_recipient_rotation;
 #[cfg(test)]
 mod test_frozen_payouts;
 #[cfg(test)]
