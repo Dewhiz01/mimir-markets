@@ -6,7 +6,10 @@ use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
 use crate::escrow;
 use crate::pool;
 use crate::storage;
-use crate::types::{ClaimResult, Error, Market, PendingOracle, MAX_BATCH_SIZE};
+use crate::types::{
+    ClaimResult, Error, Market, PendingOracle, SquadLimits, MAX_BATCH_SIZE, MAX_DURATION,
+    MAX_FEE_BPS, MAX_QUESTION_BYTES, MIN_DURATION,
+};
 
 #[contract]
 pub struct MimirSquad;
@@ -181,5 +184,15 @@ impl MimirSquad {
     pub fn get_escrow_balance(env: Env) -> Result<i128, Error> {
         let usdc = storage::usdc(&env)?;
         Ok(escrow::balance(&env, &usdc))
+    }
+
+    /// Read-only view exposing the protocol limits enforced in `create_market`.
+    pub fn get_limits(_env: Env) -> SquadLimits {
+        SquadLimits {
+            max_fee_bps: MAX_FEE_BPS,
+            min_duration: MIN_DURATION,
+            max_duration: MAX_DURATION,
+            max_question_bytes: MAX_QUESTION_BYTES,
+        }
     }
 }
