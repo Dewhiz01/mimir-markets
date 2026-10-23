@@ -56,7 +56,6 @@ impl MimirSquad {
         pool::withdraw_before_deadline(&env, participant, market_id, side, amount)
     }
 
-    
     pub fn transition_deadline(env: Env, market_id: u64) -> Result<(), Error> {
         pool::transition_deadline(&env, market_id)
     }
@@ -83,6 +82,17 @@ impl MimirSquad {
         pool::claim_fees(&env)
     }
 
+    /// Pause or unpause the contract. Pausing must never block withdrawals,
+    /// claims, or parked-payout retries; only new deposits and market creation
+    /// are gated by the pause flag.
+    pub fn set_paused(env: Env, paused: bool) -> Result<(), Error> {
+        pool::set_paused(&env, paused)
+    }
+
+    pub fn is_paused(env: Env) -> bool {
+        storage::is_paused(&env)
+    }
+
     /// Retry a payout that [`Self::claim`] parked because the transfer trapped
     /// (frozen or deauthorized trustline). Returns the amount moved, or `0`
     /// when nothing is parked.
@@ -101,6 +111,10 @@ impl MimirSquad {
         storage::get_market(&env, market_id)
     }
 
+    pub fn get_paused(env: Env) -> bool {
+        storage::is_paused(&env)
+    }
+
     pub fn get_markets_batch(
         env: Env,
         ids: Vec<u64>,
@@ -117,6 +131,10 @@ impl MimirSquad {
             results.push_back(storage::get_market_opt(&env, id));
         }
         Ok(results)
+    }
+
+    pub fn get_pause_status(env: Env) -> bool {
+        storage::is_paused(&env)
     }
 
     pub fn get_deposit(env: Env, market_id: u64, side: u32, who: Address) -> i128 {
@@ -213,5 +231,9 @@ impl MimirSquad {
             max_duration: MAX_DURATION,
             max_question_bytes: MAX_QUESTION_BYTES,
         }
+    }
+
+    pub fn get_paused_flag(env: Env) -> bool {
+        storage::is_paused(&env)
     }
 }
